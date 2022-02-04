@@ -9,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.MaskFormatter;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -18,7 +20,7 @@ import java.util.Objects;
 @Service
 public class Funcao {
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     private final ViaCepFeignClient viaCepFeignClient;
 
     @Autowired
@@ -31,61 +33,34 @@ public class Funcao {
 
 
 
-    public FretePersistDto consulta(FreteInputDto freteInputDto){
-
+    public FretePersistDto consultarFrete(FreteInputDto freteInputDto){
 
         var cepOrigem =  buscarCep(freteInputDto.getCepOrigem());
 
         var cepDestino =  buscarCep(freteInputDto.getCepDestino());
 
-
-
-        return verificacao(cepOrigem, cepDestino, freteInputDto);
-
+        return aplicarRegraDeNegocio(cepOrigem, cepDestino, freteInputDto);
 
     }
 
-    private FretePersistDto verificacao(ConsultaCepDto cepOrigem, ConsultaCepDto cepDestino, FreteInputDto freteInputDto){
-
-        var freteSave = modelMapper.map(freteInputDto, FretePersistDto.class);
-
-        freteSave.setVlTotalFrete((freteSave.getPeso()));
+    private FretePersistDto aplicarRegraDeNegocio(ConsultaCepDto cepOrigem, ConsultaCepDto cepDestino, FreteInputDto freteInputDto){
 
         if(cepOrigem.getDdd().equals(cepDestino.getDdd()) && cepOrigem.getUf().equals(cepDestino.getUf())){
-            var valorFrete = freteSave.getVlTotalFrete() - (freteSave.getVlTotalFrete() * 0.50);
-            freteSave.setVlTotalFrete(valorFrete);
-
-            freteSave.setDataPrevistaEntrega(verificarData(1));
-            freteSave.setDataConsulta(LocalDate.now());
-            return freteSave;
+            return regraDeNegocio(freteInputDto, 1);
         }
 
         if(cepOrigem.getDdd().equals(cepDestino.getDdd())){
-            var valorFrete = freteSave.getVlTotalFrete() - (freteSave.getVlTotalFrete() * 0.50);
-            freteSave.setVlTotalFrete(valorFrete);
-
-            freteSave.setDataPrevistaEntrega(verificarData(1));
-            freteSave.setDataConsulta(LocalDate.now());
-            return freteSave;
+            return regraDeNegocio(freteInputDto, 1);
         }
 
         if(cepOrigem.getUf().equals(cepDestino.getUf())){
-            var valorFrete = freteSave.getVlTotalFrete() - (freteSave.getVlTotalFrete() * 0.75);
-            freteSave.setVlTotalFrete(valorFrete);
-
-            freteSave.setDataPrevistaEntrega(verificarData(3));
-            freteSave.setDataConsulta(LocalDate.now());
-            return freteSave;
+            return regraDeNegocio(freteInputDto, 2);
         } else {
-            freteSave.setVlTotalFrete(freteSave.getPeso());
-            freteSave.setDataPrevistaEntrega(verificarData(10));
-            freteSave.setDataConsulta(LocalDate.now());
-            return freteSave;
+            return regraDeNegocio(freteInputDto, 3);
         }
     }
 
-    private LocalDate verificarData(int dias){
-        var today = LocalDate.now();
+    private LocalDate ConvertHojeEmMaisDias(int dias){
 
         Calendar cal = Calendar.getInstance();
 
@@ -111,7 +86,53 @@ public class Funcao {
         if(Objects.requireNonNull(cepReturn).getCep() == null){
             throw new RegraDeNegocioException("cep.invalido");
         }
+        return cepReturn;
+    }
 
-        return this.viaCepFeignClient.buscaCep(cep).getBody();
+    public static String formatarString(String value, String pattern) {
+        MaskFormatter mf;
+        try {
+            mf = new MaskFormatter(pattern);
+            mf.setValueContainsLiteralCharacters(false);
+            return mf.valueToString(value);
+        } catch (ParseException ex) {
+            return value;
+        }
+    }
+
+    private FretePersistDto regraDeNegocio(FreteInputDto frete, int condicao){
+
+        var freteInputDto = modelMapper.map(frete, FretePersistDto.class);
+        freteInputDto.setVlTotalFrete(freteInputDto.getPeso());
+
+        switch (condicao){
+            case 1:
+                freteInputDto.setVlTotalFrete(freteInputDto.getVlTotalFrete() - (freteInputDto.getVlTotalFrete() * 0.50));
+                freteInputDto.setDataPrevistaEntrega(ConvertHojeEmMaisDias(1));
+                freteInputDto.setDataConsulta(LocalDate.now());
+                freteInputDto.setCepOrigem(formatarString(freteInputDto.getCepOrigem(), "#####-###"));
+                freteInputDto.setCepDestino(formatarString(freteInputDto.getCepDestino(), "#####-###"));
+
+                return freteInputDto;
+
+            case 2:
+                freteInputDto.setVlTotalFrete(freteInputDto.getVlTotalFrete() - (freteInputDto.getVlTotalFrete() * 0.75));
+                freteInputDto.setDataPrevistaEntrega(ConvertHojeEmMaisDias(3));
+                freteInputDto.setDataConsulta(LocalDate.now());
+                freteInputDto.setCepOrigem(formatarString(freteInputDto.getCepOrigem(), "#####-###"));
+                freteInputDto.setCepDestino(formatarString(freteInputDto.getCepDestino(), "#####-###"));
+
+                return freteInputDto;
+
+            case 3:
+                freteInputDto.setDataPrevistaEntrega(ConvertHojeEmMaisDias(10));
+                freteInputDto.setDataConsulta(LocalDate.now());
+                freteInputDto.setCepOrigem(formatarString(freteInputDto.getCepOrigem(), "#####-###"));
+                freteInputDto.setCepDestino(formatarString(freteInputDto.getCepDestino(), "#####-###"));
+
+                return freteInputDto;
+        }
+
+        return null;
     }
 }

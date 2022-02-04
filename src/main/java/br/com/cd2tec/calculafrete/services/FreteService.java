@@ -30,7 +30,7 @@ public class FreteService {
 
     public FreteOutPutDto consultFrete(FreteInputDto freteInputDto){
 
-       var freteSalvar =  modelMapper.map(funcao.consulta(freteInputDto), Frete.class);
+       var freteSalvar =  modelMapper.map(funcao.consultarFrete(freteInputDto), Frete.class);
 
        return modelMapper.map(this.freteReposotiry.save(freteSalvar), FreteOutPutDto.class);
     }
