@@ -75,7 +75,7 @@ public class Funcao {
 
     private ConsultaCepDto buscarCep(String cepInput){
 
-        String cep = cepInput.replaceAll("[^0-9]", "");
+        String cep = cepInput.replaceAll("[^0-9]", "").replaceAll(" ","");
 
         if(cep.length() != 8){
             throw new RegraDeNegocioException("cep.invalido");
