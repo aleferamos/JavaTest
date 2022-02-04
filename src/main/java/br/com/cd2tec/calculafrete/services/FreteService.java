@@ -16,19 +16,15 @@ public class FreteService {
 
     private final ModelMapper modelMapper;
 
-    private final ViaCepFeignClient viaCepFeignClient;
-
     private final Funcao funcao;
 
     @Autowired
     public FreteService(
             FreteReposotiry freteReposotiry,
             ModelMapper modelMapper,
-            ViaCepFeignClient viaCepFeignClient,
             Funcao funcao) {
         this.freteReposotiry = freteReposotiry;
         this.modelMapper = modelMapper;
-        this.viaCepFeignClient = viaCepFeignClient;
         this.funcao = funcao;
     }
 
