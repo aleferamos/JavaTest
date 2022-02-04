@@ -2,13 +2,13 @@ package br.com.cd2tec.calculafrete.controllers;
 
 import br.com.cd2tec.calculafrete.controllers.dtos.frete.FreteOutPutDto;
 import br.com.cd2tec.calculafrete.controllers.dtos.frete.FreteInputDto;
+import br.com.cd2tec.calculafrete.controllers.dtos.frete.FretePersistDto;
 import br.com.cd2tec.calculafrete.services.FreteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 
@@ -27,5 +27,10 @@ public class FreteController {
     @Transactional
     public ResponseEntity<FreteOutPutDto> consultarFrete(@RequestBody FreteInputDto freteInputDto){
         return ResponseEntity.ok(this.freteService.consultFrete(freteInputDto));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<FretePersistDto>> listarTodosFretes(Pageable pageable){
+        return ResponseEntity.ok(freteService.getAll(pageable));
     }
 }
