@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
@@ -32,7 +33,7 @@ public class FreteController {
     @PostMapping
     @Transactional
     @ApiOperation("Endpoint responsável por consultar e calcular o frete.")
-    public ResponseEntity<FreteOutPutDto> consultarFrete(@RequestBody FreteInputDto freteInputDto){
+    public ResponseEntity<FreteOutPutDto> consultarFrete(@RequestBody @Valid FreteInputDto freteInputDto){
 
         URI uri = UriComponentsBuilder.fromPath("frete").buildAndExpand(freteInputDto).toUri();
 

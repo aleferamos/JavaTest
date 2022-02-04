@@ -45,6 +45,11 @@ public class Funcao {
 
     private FretePersistDto aplicarRegraDeNegocio(ConsultaCepDto cepOrigem, ConsultaCepDto cepDestino, FreteInputDto freteInputDto){
 
+        isEmpty(freteInputDto);
+
+        if(freteInputDto.getPeso() == null || freteInputDto.getPeso().isNaN()){
+            throw new RegraDeNegocioException("peso.vazio");
+        }
         if(cepOrigem.getDdd().equals(cepDestino.getDdd()) && cepOrigem.getUf().equals(cepDestino.getUf())){
             return regraDeNegocio(freteInputDto, 1);
         }
@@ -75,7 +80,7 @@ public class Funcao {
 
     private ConsultaCepDto buscarCep(String cepInput){
 
-        String cep = cepInput.replaceAll("[^0-9]", "").replaceAll(" ","");
+        String cep = cepInput.replaceAll("[^0-9]", "").trim();
 
         if(cep.length() != 8){
             throw new RegraDeNegocioException("cep.invalido");
@@ -134,5 +139,15 @@ public class Funcao {
         }
 
         return null;
+    }
+
+    private void isEmpty(FreteInputDto freteInputDto){
+        if(freteInputDto.getPeso() == null || freteInputDto.getPeso().isNaN()){
+            throw new RegraDeNegocioException("peso.vazio");
+        }
+
+        if(freteInputDto.getNomeDestinatario() == null || freteInputDto.getNomeDestinatario().isEmpty()){
+            throw new RegraDeNegocioException("nomeDestinatario.vazio");
+        }
     }
 }
