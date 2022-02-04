@@ -3,7 +3,7 @@ package br.com.cd2tec.calculafrete.controllers.dtos.frete;
 import lombok.Getter;
 
 @Getter
-public class FreteParamDto {
+public class FreteInputDto {
 
     private final Double peso;
 
@@ -13,7 +13,7 @@ public class FreteParamDto {
 
     private final String nomeDestinatario;
 
-    public FreteParamDto(Double peso, String cepOrigem, String cepDestino, String nomeDestinatario) {
+    public FreteInputDto(Double peso, String cepOrigem, String cepDestino, String nomeDestinatario) {
         this.peso = peso;
         this.cepOrigem = cepOrigem;
         this.cepDestino = cepDestino;

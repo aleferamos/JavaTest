@@ -1,8 +1,7 @@
 package br.com.cd2tec.calculafrete.controllers;
 
-import br.com.cd2tec.calculafrete.controllers.dtos.frete.FreteDto;
 import br.com.cd2tec.calculafrete.controllers.dtos.frete.FreteOutPutDto;
-import br.com.cd2tec.calculafrete.controllers.dtos.frete.FreteParamDto;
+import br.com.cd2tec.calculafrete.controllers.dtos.frete.FreteInputDto;
 import br.com.cd2tec.calculafrete.services.FreteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ public class FreteController {
     }
 
     @PostMapping
-   public ResponseEntity<FreteOutPutDto> consultarFrete(@RequestBody FreteParamDto freteParamDto){
-        return ResponseEntity.ok(this.freteService.consultFrete(freteParamDto));
+   public ResponseEntity<FreteOutPutDto> consultarFrete(@RequestBody FreteInputDto freteInputDto){
+        return ResponseEntity.ok(this.freteService.consultFrete(freteInputDto));
    }
 }

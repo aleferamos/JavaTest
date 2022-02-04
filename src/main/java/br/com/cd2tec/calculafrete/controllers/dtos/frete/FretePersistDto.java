@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class FreteDto {
+public class FretePersistDto {
 
     private Double peso;
 

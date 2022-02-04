@@ -1,8 +1,8 @@
 package br.com.cd2tec.calculafrete.utils;
 
 import br.com.cd2tec.calculafrete.controllers.dtos.Cep.ConsultaCepDto;
-import br.com.cd2tec.calculafrete.controllers.dtos.frete.FreteDto;
-import br.com.cd2tec.calculafrete.controllers.dtos.frete.FreteParamDto;
+import br.com.cd2tec.calculafrete.controllers.dtos.frete.FretePersistDto;
+import br.com.cd2tec.calculafrete.controllers.dtos.frete.FreteInputDto;
 import br.com.cd2tec.calculafrete.services.ViaCepFeignClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,20 +47,20 @@ public class Funcao {
         return this.viaCepFeignClient.buscaCep(cep.replace(" ","")).getBody();
     }
 
-    public FreteDto consulta(FreteParamDto freteParamDto){
+    public FretePersistDto consulta(FreteInputDto freteInputDto){
 
-        var cepOrigem =  consultarCep(freteParamDto.getCepOrigem());
+        var cepOrigem =  consultarCep(freteInputDto.getCepOrigem());
 
-        var cepDestino =  consultarCep(freteParamDto.getCepDestino());
+        var cepDestino =  consultarCep(freteInputDto.getCepDestino());
 
 
-        return verificacao(cepOrigem, cepDestino, freteParamDto);
+        return verificacao(cepOrigem, cepDestino, freteInputDto);
 
     }
 
-    private FreteDto verificacao(ConsultaCepDto cepOrigem, ConsultaCepDto cepDestino, FreteParamDto freteParamDto){
+    private FretePersistDto verificacao(ConsultaCepDto cepOrigem, ConsultaCepDto cepDestino, FreteInputDto freteInputDto){
 
-        var freteSave = modelMapper.map(freteParamDto, FreteDto.class);
+        var freteSave = modelMapper.map(freteInputDto, FretePersistDto.class);
 
         freteSave.setVlTotalFrete((freteSave.getPeso()));
 
