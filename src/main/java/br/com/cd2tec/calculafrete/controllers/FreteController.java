@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.transaction.Transactional;
+
 @RestController
 @RequestMapping("frete")
 public class FreteController {
@@ -22,7 +24,8 @@ public class FreteController {
     }
 
     @PostMapping
-   public ResponseEntity<FreteOutPutDto> consultarFrete(@RequestBody FreteInputDto freteInputDto){
+    @Transactional
+    public ResponseEntity<FreteOutPutDto> consultarFrete(@RequestBody FreteInputDto freteInputDto){
         return ResponseEntity.ok(this.freteService.consultFrete(freteInputDto));
-   }
+    }
 }
