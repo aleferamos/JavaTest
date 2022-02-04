@@ -8,22 +8,14 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class FreteDto {
-
-    private Double peso;
-
-    private String cepOrigem;
-
-    private String cepDestino;
-
-    private String nomeDestinatario;
+public class FreteOutPutDto {
 
     private Double vlTotalFrete;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dataPrevistaEntrega;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    private LocalDate dataConsulta;
+    private String cepOrigem;
 
+    private String cepDestino;
 }
